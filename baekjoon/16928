@@ -1,0 +1,62 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+
+using namespace std;
+
+int board[101];     // 사다리와 뱀 정보 (board[출발] = 도착)
+int dist[101];      // 각 칸에 도착하는 최소 주사위 횟수
+
+void bfs() {
+    queue<int> q;
+    q.push(1);
+    dist[1] = 0;
+
+    while (!q.empty()) {
+        int cur = q.front();
+        q.pop();
+
+        // 100번 칸에 도착하면 종료
+        if (cur == 100) {
+            cout << dist[100] << endl;
+            return;
+        }
+
+        // 주사위 1~6 던지기
+        for (int i = 1; i <= 6; i++) {
+            int next = cur + i;
+
+            if (next <= 100) {
+                // 사다리나 뱀이 있다면 그 목적지로 강제 이동
+                if (board[next] != 0) {
+                    next = board[next];
+                }
+
+                // 이동한 최종 위치가 처음 방문하는 곳이라면
+                if (dist[next] == -1) {
+                    dist[next] = dist[cur] + 1;
+                    q.push(next);
+                }
+            }
+        }
+    }
+}
+
+int main() {
+    int N, M;
+    cin >> N >> M;
+
+    // 사다리와 뱀 정보 입력
+    for (int i = 0; i < N + M; i++) {
+        int u, v;
+        cin >> u >> v;
+        board[u] = v;
+    }
+
+    // 거리 배열 -1로 초기화
+    for (int i = 1; i <= 100; i++) dist[i] = -1;
+
+    bfs();
+
+    return 0;
+}
