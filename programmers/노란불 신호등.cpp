@@ -1,99 +1,57 @@
-#include <string>
-#include <vector>
-#include <numeric> // gcd
+#include <bits/stdc++.h>
 using namespace std;
 
-class Solution {
-public:
-    int solution(vector<vector<int>> signals) {
-        int limit = 1;
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = a % b;
+        a = b;
+        b = temp;
+    }
+    return a;
+}
 
-        // 모든 신호등 주기의 최소공배수 구하기
-        for (auto signal : signals) {
-            int cycle = signal[0] + signal[1] + signal[2];
-            limit = lcm(limit, cycle);
-        }
+int lcm(int a, int b) {
+    return a / gcd(a, b) * b;
+}
 
-        // 1초부터 전체 반복 주기까지 확인
-        for (int t = 1; t <= limit; t++) {
-            bool allYellow = true;
+int solution(vector<vector<int>> signals) {
+    int limit = 1;
 
-            for (auto signal : signals) {
-                int G = signal[0];
-                int Y = signal[1];
-                int R = signal[2];
+    // 전체 패턴이 반복되는 최소공배수 구하기
+    for (int i = 0; i < signals.size(); i++) {
+        int G = signals[i][0];
+        int Y = signals[i][1];
+        int R = signals[i][2];
 
-                int cycle = G + Y + R;
-
-                // 현재 시간이 이 신호등의 한 주기 안에서 몇 번째 초인지
-                int now = (t - 1) % cycle + 1;
-
-                // 노란불 구간이 아니면 실패
-                if (!(G < now && now <= G + Y)) {
-                    allYellow = false;
-                    break;
-                }
-            }
-
-            if (allYellow) {
-                return t;
-            }
-        }
-
-        return -1;
+        int cycle = G + Y + R;
+        limit = lcm(limit, cycle);
     }
 
-private:
-    int lcm(int a, int b) {
-        return a / gcd(a, b) * b;
-    }
-};#include <string>
-#include <vector>
-#include <numeric> // gcd
-using namespace std;
+    // 1초부터 전체 반복 주기까지 확인
+    for (int t = 1; t <= limit; t++) {
+        bool allYellow = true;
 
-class Solution {
-public:
-    int solution(vector<vector<int>> signals) {
-        int limit = 1;
+        for (int i = 0; i < signals.size(); i++) {
+            int G = signals[i][0];
+            int Y = signals[i][1];
+            int R = signals[i][2];
 
-        // 모든 신호등 주기의 최소공배수 구하기
-        for (auto signal : signals) {
-            int cycle = signal[0] + signal[1] + signal[2];
-            limit = lcm(limit, cycle);
-        }
+            int cycle = G + Y + R;
 
-        // 1초부터 전체 반복 주기까지 확인
-        for (int t = 1; t <= limit; t++) {
-            bool allYellow = true;
+            // t초가 이 신호등의 한 주기 안에서 몇 번째 초인지
+            int now = (t - 1) % cycle + 1;
 
-            for (auto signal : signals) {
-                int G = signal[0];
-                int Y = signal[1];
-                int R = signal[2];
-
-                int cycle = G + Y + R;
-
-                // 현재 시간이 이 신호등의 한 주기 안에서 몇 번째 초인지
-                int now = (t - 1) % cycle + 1;
-
-                // 노란불 구간이 아니면 실패
-                if (!(G < now && now <= G + Y)) {
-                    allYellow = false;
-                    break;
-                }
-            }
-
-            if (allYellow) {
-                return t;
+            // 노란불 구간: G+1초부터 G+Y초까지
+            if (!(G < now && now <= G + Y)) {
+                allYellow = false;
+                break;
             }
         }
 
-        return -1;
+        if (allYellow) {
+            return t;
+        }
     }
 
-private:
-    int lcm(int a, int b) {
-        return a / gcd(a, b) * b;
-    }
-};
+    return -1;
+}
